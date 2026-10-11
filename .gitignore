@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.sqlite
+*.sqlite3
+*.db
+# Never add live SIEM or endpoint telemetry to this public training repo.
+private-telemetry/
+*.live.csv
