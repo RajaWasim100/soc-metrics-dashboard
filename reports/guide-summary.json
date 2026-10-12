@@ -1,0 +1,181 @@
+{
+  "label": "PUBLISHED REAL-WORLD BENCHMARK \u2014 NOT USER'S SOC ACTIVITY",
+  "dataset": "Microsoft GUIDE (Kaggle Microsoft Security Incident Prediction)",
+  "dataset_version": "2",
+  "source_url": "https://www.kaggle.com/datasets/Microsoft/microsoft-security-incident-prediction",
+  "license": "CDLA-Permissive-2.0; include license terms when redistributing source data",
+  "input_file": "GUIDE_Test.csv",
+  "input_bytes": 1087963831,
+  "input_sha256": "fdfd7523efd6e3c26bd0290ba6acbcb237196cf923dd56a28e96802035db35a3",
+  "unit_of_analysis": "Distinct incident (IncidentId); source rows are evidence-level and can repeat/conflict on incident grade.",
+  "row_count": 4147992,
+  "distinct_alert_count": 637320,
+  "distinct_incident_count": 236267,
+  "incident_grade_counts_majority_vote": {
+    "BenignPositive": 116226,
+    "FalsePositive": 69758,
+    "TruePositive": 50283
+  },
+  "incidents_with_grade_ties": 2993,
+  "evidence_rows_by_category": {
+    "Collection": 6272,
+    "CommandAndControl": 357179,
+    "CredentialAccess": 130196,
+    "CredentialStealing": 873,
+    "DefenseEvasion": 21611,
+    "Discovery": 63633,
+    "Execution": 115658,
+    "Exfiltration": 615284,
+    "Exploit": 1653,
+    "Impact": 307810,
+    "InitialAccess": 1952969,
+    "LateralMovement": 19426,
+    "Malware": 71593,
+    "Persistence": 29075,
+    "PrivilegeEscalation": 1555,
+    "Ransomware": 5605,
+    "SuspiciousActivity": 440093,
+    "UnwantedSoftware": 7496,
+    "WebExploit": 11
+  },
+  "deidentified_incident_profiles": [
+    {
+      "profile_label": "De-identified TruePositive cohort",
+      "majority_vote_grade": "TruePositive",
+      "incident_count": 25,
+      "distinct_alert_count": 71,
+      "total_evidence_rows": 468,
+      "median_evidence_rows_per_incident": 4,
+      "top_evidence_categories": {
+        "InitialAccess": 404,
+        "CommandAndControl": 30,
+        "SuspiciousActivity": 15,
+        "Impact": 13,
+        "CredentialAccess": 3,
+        "Execution": 3
+      },
+      "top_entity_types": {
+        "Mailbox": 116,
+        "MailMessage": 115,
+        "User": 65,
+        "File": 44,
+        "MailCluster": 39,
+        "Ip": 23,
+        "Machine": 20,
+        "Url": 18
+      },
+      "evidence_roles": {
+        "Impacted": 205,
+        "Related": 263
+      },
+      "top_mitre_techniques": {
+        "T1566.001": 263,
+        "T1566": 47,
+        "T1566.002": 33,
+        "T1078": 28,
+        "T1078.004": 28,
+        "T1110": 3,
+        "T1110.001": 3,
+        "T1110.003": 3
+      },
+      "grouped_response_actions": {},
+      "top_granular_response_actions": {}
+    },
+    {
+      "profile_label": "De-identified BenignPositive cohort",
+      "majority_vote_grade": "BenignPositive",
+      "incident_count": 25,
+      "distinct_alert_count": 42,
+      "total_evidence_rows": 175,
+      "median_evidence_rows_per_incident": 5,
+      "top_evidence_categories": {
+        "CommandAndControl": 48,
+        "InitialAccess": 48,
+        "SuspiciousActivity": 35,
+        "Exfiltration": 29,
+        "CredentialAccess": 9,
+        "Execution": 3,
+        "LateralMovement": 3
+      },
+      "top_entity_types": {
+        "User": 44,
+        "File": 19,
+        "Machine": 19,
+        "Ip": 18,
+        "Url": 18,
+        "Process": 17,
+        "MailMessage": 14,
+        "Mailbox": 11
+      },
+      "evidence_roles": {
+        "Impacted": 97,
+        "Related": 78
+      },
+      "top_mitre_techniques": {
+        "T1566": 20,
+        "T1110": 9,
+        "T1110.001": 4,
+        "T1566.001": 4,
+        "T1021.001": 3,
+        "T1078": 3,
+        "T1078.004": 3,
+        "T1563": 3
+      },
+      "grouped_response_actions": {},
+      "top_granular_response_actions": {}
+    },
+    {
+      "profile_label": "De-identified FalsePositive cohort",
+      "majority_vote_grade": "FalsePositive",
+      "incident_count": 25,
+      "distinct_alert_count": 47,
+      "total_evidence_rows": 213,
+      "median_evidence_rows_per_incident": 5,
+      "top_evidence_categories": {
+        "Exfiltration": 103,
+        "InitialAccess": 75,
+        "Execution": 10,
+        "SuspiciousActivity": 9,
+        "CommandAndControl": 5,
+        "CredentialAccess": 5,
+        "Discovery": 4,
+        "Impact": 2
+      },
+      "top_entity_types": {
+        "User": 50,
+        "Ip": 42,
+        "Machine": 24,
+        "File": 22,
+        "CloudLogonRequest": 15,
+        "MailMessage": 15,
+        "Mailbox": 15,
+        "CloudLogonSession": 14
+      },
+      "evidence_roles": {
+        "Impacted": 111,
+        "Related": 102
+      },
+      "top_mitre_techniques": {
+        "T1078": 47,
+        "T1078.004": 47,
+        "T1566": 12,
+        "T1053.002": 5,
+        "T1053.005": 5,
+        "T1033": 4,
+        "T1059.001": 4,
+        "T1087.001": 4
+      },
+      "grouped_response_actions": {},
+      "top_granular_response_actions": {}
+    }
+  ],
+  "profile_selection_method": "For each majority-vote grade, select up to 25 incidents by ascending SHA-256 of source IncidentId, then summarize cohort-level evidence and response-action attributes. Source IDs are not exported. This deterministic cohort is not a random, representative, or inferential sample.",
+  "limitations": [
+    "GUIDE is published Microsoft customer-derived security benchmark data; it is not the user's employer, tenant, or personal SOC work.",
+    "Input is GUIDE_Test.csv; this descriptive report performs no train/test modeling or operational alert response.",
+    "A single incident can have multiple evidence rows and conflicting row-level IncidentGrade labels. Incident counts use majority vote with a declared TruePositive > BenignPositive > FalsePositive tie-break; tied cases are counted.",
+    "The data is observational and product/customer-specific; results do not establish general detection quality, SLA performance, causation, or analyst skill. Selected cohorts are illustrative, not representative cases.",
+    "ActionGrouped and ActionGranular are published benchmark labels, not proof of actions performed by the user or instructions to take action.",
+    "Do not publish raw entity data from the source. Keep source files in the ignored data/raw directory; exported profiles contain aggregates only, with no source incident, alert, account, IP, device, file, URL, or message identifiers."
+  ]
+}

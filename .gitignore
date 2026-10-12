@@ -5,6 +5,10 @@ venv/
 *.sqlite
 *.sqlite3
 *.db
-# Never add live SIEM or endpoint telemetry to this public training repo.
-private-telemetry/
+# Published datasets and any actual SIEM/endpoint telemetry must stay out of Git.
+data/raw/
+data/private/
+*.csv.gz
+*.parquet
+*.parquet.gzip
 *.live.csv

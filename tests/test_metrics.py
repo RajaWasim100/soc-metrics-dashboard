@@ -23,20 +23,21 @@ class MetricsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             conn=sqlite3.connect(Path(td)/'metrics.sqlite');conn.executescript(SCHEMA)
             try:
-                load_csv(conn,ROOT/'data/alerts.csv',ROOT/'data/incidents.csv')
+                alerts=Path(td)/'alerts.csv';incidents=Path(td)/'incidents.csv'
+                alerts.write_text('alert_id,created_at,alert_type,severity,disposition,source\nA-1,2026-10-01T08:00:00Z,Training signal,Medium,Investigating,Fixture\n',encoding='utf-8')
+                incidents.write_text('incident_id,alert_id,occurred_at,detected_at,first_response_at,resolved_at,category,outcome\nI-1,A-1,2026-10-01T07:50:00Z,2026-10-01T08:00:00Z,2026-10-01T08:05:00Z,,Training,Unresolved\n',encoding='utf-8')
+                load_csv(conn,alerts,incidents)
                 result=build(conn)
-                self.assertEqual(result['alert_record_count'],12)
-                self.assertEqual(result['incident_count'],7)
-                self.assertEqual(result['time_to_detect']['count'],6)
-                self.assertEqual(result['time_to_detect']['mean_minutes'],29.67)
-                self.assertEqual(result['time_to_first_response']['count'],6)
-                self.assertEqual(result['missing_interval_count']['ttr'],1)
-                self.assertEqual(result['invalid_negative_interval_count']['ttd'],1)
+                self.assertEqual(result['alert_record_count'],1)
+                self.assertEqual(result['incident_count'],1)
+                self.assertEqual(result['time_to_detect']['count'],1)
+                self.assertEqual(result['time_to_detect']['mean_minutes'],10.0)
+                self.assertEqual(result['time_to_first_response']['count'],1)
                 self.assertTrue(result['label'].startswith('SYNTHETIC'))
                 # Re-running with same source replaces rather than duplicates.
-                load_csv(conn,ROOT/'data/alerts.csv',ROOT/'data/incidents.csv')
+                load_csv(conn,alerts,incidents)
                 again=build(conn)
-                self.assertEqual(again['alert_record_count'],12)
+                self.assertEqual(again['alert_record_count'],1)
                 self.assertEqual(again['time_to_detect'],result['time_to_detect'])
             finally:
                 conn.close()

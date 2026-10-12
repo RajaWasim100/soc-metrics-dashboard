@@ -1,0 +1,114 @@
+{
+  "label": "SYNTHETIC TRAINING CASES — NO LIVE TELEMETRY",
+  "notice": "Every person, host, address, message, and event in these exercises is fictional and fabricated. KQL snippets are illustrative and have not been run against a tenant. A match is a lead for investigation, not proof of compromise.",
+  "cases": [
+    {
+      "id": "identity-signin",
+      "title": "Repeated sign-in failures followed by success",
+      "source": "Microsoft Sentinel / Entra sign-in exercise",
+      "severity": "Medium · exercise label only",
+      "alert": "A synthetic account has several failed sign-ins followed by one successful sign-in from a source marked unfamiliar in the mock baseline.",
+      "entities": ["analyst1@example.invalid", "203.0.113.42 (documentation-only address)", "Microsoft 365 Portal"],
+      "facts": [
+        "Nine failed sign-in events (synthetic ResultType 50126) occurred over eight minutes, followed by one successful event (ResultType 0).",
+        "The mock exercise labels the source as unfamiliar; there is no real user or trusted location baseline attached.",
+        "MFA details, device compliance, user confirmation, token activity, and other accounts touched by the source are not yet known."
+      ],
+      "hypotheses": [
+        "Possible password guessing or credential use followed by account access; success and failures need identity-owner corroboration.",
+        "Possible expected VPN, travel, shared egress, stale credentials, or a service/app pattern; location unfamiliarity alone is not malicious proof."
+      ],
+      "investigate": [
+        "Confirm account owner, expected travel/VPN, app, device, authentication method, MFA result, and whether the successful event was recognized.",
+        "Pivot on the source and time window to determine whether multiple accounts were targeted; compare related interactive and non-interactive sign-in sources where available.",
+        "Record event IDs, time zone, observed facts, unknowns, and the identity-team ticket/owner. Escalate suspected unauthorized success under the incident process."
+      ],
+      "query_context": "Sentinel / Log Analytics workspace with the Entra ID sign-in connector. This query is an unexecuted example; confirm table availability, schema, permissions, and retention first.",
+      "kql": "SigninLogs\n| where TimeGenerated > ago(24h)\n| where (UserPrincipalName =~ \"analyst1@example.invalid\" or IPAddress == \"203.0.113.42\")\n| project TimeGenerated, UserPrincipalName, AppDisplayName, IPAddress, Location, IsInteractive, ResultType, ResultDescription\n| take 100",
+      "recommended_action": "escalate",
+      "actions": [
+        {"id": "investigate", "title": "Keep open and gather corroborating identity evidence", "feedback": "Appropriate if the identity owner and incident lead classify this as lower risk, but the unexplained successful sign-in after repeated failures must remain tracked."},
+        {"id": "escalate", "title": "Escalate the possible unauthorized success; validate in parallel", "feedback": "Recommended for this exercise: the successful sign-in after repeated failures is a credible account-risk signal. Escalation is not proof of compromise and does not itself authorize account changes."},
+        {"id": "close", "title": "Close as benign based on unfamiliar location alone", "feedback": "Not supported. An unfamiliar source does not prove maliciousness, but the unverified successful sign-in and missing MFA/device/user evidence mean closure is premature."}
+      ],
+      "closure_criteria": "Close only after an authorized reviewer documents trusted sign-in evidence, user/device confirmation, the disposition, and any required follow-up; use approved containment authority if compromise is supported.",
+      "safety_boundary": "Do not reset credentials, revoke sessions, block an IP, or contact the address based only on this exercise. Follow the incident lead and identity team's authorization process.",
+      "references": [
+        {"title": "Microsoft Learn: SigninLogs table reference", "url": "https://learn.microsoft.com/en-us/azure/azure-monitor/reference/tables/signinlogs"},
+        {"title": "Microsoft Learn: Send Microsoft Entra ID data to Microsoft Sentinel", "url": "https://learn.microsoft.com/en-us/azure/sentinel/connect-azure-active-directory"}
+      ]
+    },
+    {
+      "id": "endpoint-powershell",
+      "title": "Encoded PowerShell launched by an office application",
+      "source": "Microsoft Defender XDR advanced-hunting exercise",
+      "severity": "High · exercise label only",
+      "alert": "A synthetic endpoint alert identifies an encoded PowerShell command whose reported initiating process is WINWORD.EXE.",
+      "entities": ["LAB-WS-01 (fictional host)", "trainee (fictional account)", "powershell.exe"],
+      "facts": [
+        "The toy event records PowerShell with an encoded-command switch and WINWORD.EXE as the initiating process.",
+        "The command payload is intentionally omitted; the exercise contains no executable payload or real endpoint telemetry.",
+        "No signer/hash reputation, parent document origin, child-process or network events, user activity, or managed-device baseline is supplied."
+      ],
+      "hypotheses": [
+        "Possible malicious document-driven script execution; parent-child context is concerning and needs prompt escalation under the endpoint playbook.",
+        "Possible approved macro, administrative automation, or test tool; encoded text and a process name alone do not establish intent or impact."
+      ],
+      "investigate": [
+        "Preserve the event and correlate by ProcessUniqueId, device, account, timestamp, parent/child processes, file/hash/signature, and approved change or software records.",
+        "Check related endpoint detections, network connections, file writes, other devices/users, and whether the device is managed and reachable.",
+        "Notify the endpoint incident owner promptly. Any isolation, evidence collection, or remediation must use the approved authority and evidence-preservation procedure."
+      ],
+      "query_context": "Microsoft Defender XDR advanced hunting (or an appropriately connected Sentinel environment). This query is an unexecuted example, not a synthetic tenant result. DeviceProcessEvents requires Defender for Endpoint telemetry; confirm the actual schema before use.",
+      "kql": "DeviceProcessEvents\n| where Timestamp > ago(24h)\n| where DeviceName =~ \"LAB-WS-01\"\n| where FileName in~ (\"powershell.exe\", \"pwsh.exe\")\n| project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine, ProcessUniqueId, InitiatingProcessFileName, InitiatingProcessCommandLine\n| take 100",
+      "recommended_action": "escalate",
+      "actions": [
+        {"id": "investigate", "title": "Preserve and correlate endpoint evidence while keeping the case open", "feedback": "Evidence correlation is essential, but given the reported office-app-to-encoded-PowerShell chain, notify the endpoint incident owner promptly rather than treating this as routine low-priority review."},
+        {"id": "escalate", "title": "Promptly escalate to the endpoint incident owner and preserve evidence", "feedback": "Recommended for this exercise: the parent-child pattern merits urgent analyst review. Escalation does not mean the activity is confirmed malicious or authorize endpoint isolation."},
+        {"id": "close", "title": "Close because the command is encoded", "feedback": "Unsupported. Encoding is neither proof of malware nor proof of safety. The parent process and missing context require investigation."}
+      ],
+      "closure_criteria": "Close only when an authorized reviewer correlates the event with trusted endpoint evidence and documents a supported benign explanation or completed incident handling, owner, and disposition.",
+      "safety_boundary": "Never run or decode an unknown payload for this exercise. Do not isolate a device, delete files, or disable an account without approved incident authority.",
+      "references": [
+        {"title": "Microsoft Learn: DeviceProcessEvents table reference", "url": "https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-deviceprocessevents-table"},
+        {"title": "Microsoft Learn: Advanced hunting query best practices", "url": "https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-best-practices"}
+      ]
+    },
+    {
+      "id": "reported-phish",
+      "title": "User-reported credential lure with unknown exposure",
+      "source": "Microsoft Defender XDR email investigation exercise",
+      "severity": "High · exercise label only",
+      "alert": "A synthetic user report and mock gateway record flag a credential-themed message. Delivery state, recipient scope, and link interaction are not yet confirmed.",
+      "entities": ["SYNTH-MSG-003 (fictional message ID)", "analyst1@example.invalid", "billing@example.invalid"],
+      "facts": [
+        "The toy report has a credential-verification subject, mismatched display and sender context, and a mock gateway Phish label.",
+        "The sample event does not establish whether the message was delivered, clicked, replied to, or seen by additional recipients.",
+        "Sender and recipient domains are reserved examples; there are no live URLs, mailbox contents, or user identities."
+      ],
+      "hypotheses": [
+        "Possible credential-harvesting campaign; determine delivery, recipients, user action, and any associated sign-in activity using approved tools.",
+        "Possible mistaken or outdated gateway verdict, simulated test, or legitimate business message; confirm with trusted mail telemetry and the business owner."
+      ],
+      "investigate": [
+        "Use the message identifier to inspect the latest trusted delivery/threat state and identify affected recipients; account for multiple records when verdict or delivery changes.",
+        "Ask the reporter privately whether they clicked, replied, entered credentials, or approved an MFA request; correlate approved URL-click and sign-in telemetry if available.",
+        "Coordinate search/quarantine, user notification, credential/session actions, and evidence preservation with the mail/security owner and incident lead."
+      ],
+      "query_context": "Microsoft Defender XDR advanced hunting. This query is an unexecuted example, not a synthetic tenant result. EmailEvents depends on Defender for Office 365 telemetry; confirm connector, table, and current delivery-state semantics before use.",
+      "kql": "EmailEvents\n| where Timestamp > ago(7d)\n| where NetworkMessageId == \"SYNTH-MSG-003\"\n| project Timestamp, NetworkMessageId, SenderFromAddress, RecipientEmailAddress, Subject, ThreatTypes, DeliveryAction, DeliveryLocation\n| take 100",
+      "recommended_action": "escalate",
+      "actions": [
+        {"id": "investigate", "title": "Keep the case open and establish delivery, click, and recipient scope", "feedback": "These are necessary pivots. Because the mock gateway flags a credential-themed report, involve the mail/security owner while checking exposure rather than waiting to close the alert."},
+        {"id": "escalate", "title": "Escalate to the mail/security owner; establish exposure and scope", "feedback": "Recommended for this exercise: a possible credential lure warrants prompt owner review. A gateway label is a signal, not proof, and containment remains authorized-owner work."},
+        {"id": "close", "title": "Close because no click is recorded in the supplied facts", "feedback": "No click evidence was supplied; that is an unknown, not a negative result. Establish recipient and user-action scope before closure."}
+      ],
+      "closure_criteria": "Document the trusted final message state, recipients and exposure checks, reporter response, any correlated identity evidence, owner-approved actions, and reviewer disposition.",
+      "safety_boundary": "Do not click the message URL, submit message content to public scanners, purge mail, or change accounts based only on this synthetic case. Use approved tools and delegated authority.",
+      "references": [
+        {"title": "Microsoft Learn: EmailEvents table reference", "url": "https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-emailevents-table"},
+        {"title": "Microsoft Learn: Hunt across devices, email, apps, and identities", "url": "https://learn.microsoft.com/en-us/defender-xdr/advanced-hunting-query-emails-devices"}
+      ]
+    }
+  ]
+}
